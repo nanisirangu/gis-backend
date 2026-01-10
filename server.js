@@ -22,6 +22,15 @@ app.get("/api/test-db", async (req, res) => {
     res.status(500).json({ error: "DB connection failed" });
   }
 });
+app.get("/api/test-db", async (req, res) => {
+  try {
+    const r = await pool.query("SELECT NOW()");
+    res.json({ db_time: r.rows[0].now });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "DB connection failed" });
+  }
+});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
