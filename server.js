@@ -23,6 +23,9 @@ app.get("/api/test-db", async (req, res) => {
     res.status(500).json({ error: "DB connection failed" });
   }
 });
+app.get("/", (req, res) => {
+  res.send("GIS Backend is running");
+});
 
 app.listen(PORT, () => {
   console.log("Backend running on port", PORT);
