@@ -21,7 +21,9 @@ router.get("/daily-summary", async (req, res) => {
           0
         ) AS total_hours
       FROM public.work_grids
-      WHERE DATE(start_time) = $1
+      WHERE start_time >= $1::date
+  AND start_time < ($1::date + INTERVAL '1 day')
+
       GROUP BY emp_id
       ORDER BY emp_id
       `,
