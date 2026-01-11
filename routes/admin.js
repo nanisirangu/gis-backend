@@ -10,25 +10,31 @@ router.get("/daily-summary", async (req, res) => {
     }
 
     const result = await pool.query(
-      `
-      SELECT
-        emp_id,
-        COUNT(*)::int AS grids,
-        COALESCE(SUM(sqkm),0) AS total_sqkm,
-        COALESCE(SUM(features),0)::int AS total_features,
-        COALESCE(
-          SUM(EXTRACT(EPOCH FROM (end_time - start_time))) / 3600,
-          0
-        ) AS total_hours
-      FROM public.work_grids
-      WHERE start_time >= $1::date
-  AND start_time < ($1::date + INTERVAL '1 day')
+  `
+  SELECT
+    emp_id,
+    COUNT(*)::int AS grids,
+    COALESCE(SUM(sqkm),0) AS total_sqkm,
+    COALESCE(SUM(features),0)::int AS total_features,
+    COALESCE(
+      SUM(
+        EXTRACT(
+          EPOCH FROM (
+            COALESCE(end_time, start_time) - start_time
+          )
+        )
+      ) / 3600,
+      0
+    ) AS total_hours
+  FROM public.work_grids
+  WHERE start_time >= $1::date
+    AND start_time < ($1::date + INTERVAL '1 day')
+  GROUP BY emp_id
+  ORDER BY emp_id
+  `,
+  [date]
+);
 
-      GROUP BY emp_id
-      ORDER BY emp_id
-      `,
-      [date]
-    );
 
     res.json(result.rows);
   } catch (err) {
