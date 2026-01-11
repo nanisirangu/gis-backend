@@ -28,6 +28,15 @@ app.use((req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
+app.get("/api/__debug_db", async (req, res) => {
+  try {
+    const r = await pool.query("SELECT current_database()");
+    res.json(r.rows[0]);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 app.listen(PORT, () => {
   console.log("Backend running on port", PORT);
 });
