@@ -19,7 +19,7 @@ router.get("/daily-summary", async (req, res) => {
         SUM(sqkm) AS total_sqkm,
         SUM(features) AS total_features,
         SUM(elapsed_seconds) / 3600.0 AS total_hours
-      FROM public.work_grids
+      FROM work_grids
       WHERE work_date = $1
       GROUP BY emp_id
       ORDER BY emp_id
